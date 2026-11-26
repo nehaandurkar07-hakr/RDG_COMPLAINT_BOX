@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co; media-src 'self' blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <style id="antiClickjack">html{display:none !important}</style>
+  <script src="js/guard.js"></script>
+  <title>Complaint Box | Smt. Radhadevi Goenka College for Women, Akola</title>
+  <meta name="description" content="Online Complaint Box of Smt. Radhadevi Goenka College for Women, Akola. Students can raise complaints with the HOD, Principal and College Management and track their status.">
+  <meta name="theme-color" content="#4f5bd5">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="auth-shell">
+
+    <!-- Brand panel (desktop only) -->
+    <aside class="auth-aside">
+      <div>
+        <div class="brand-mark"><i data-icon="shield"></i></div>
+        <h2>Your voice matters.<br>We make sure it is heard.</h2>
+        <p>The official online Complaint Box of Smt. Radhadevi Goenka College for Women, Akola. Raise a concern, attach proof and follow it until it is resolved.</p>
+        <ul class="auth-points">
+          <li><i data-icon="lock"></i><div><b>Confidential by design</b>Anonymous complaints hide your identity from everyone, including the HOD and the Principal.</div></li>
+          <li><i data-icon="activity"></i><div><b>Live status tracking</b>Every complaint gets a unique ID and you see each step until it is resolved.</div></li>
+          <li><i data-icon="arrowUp"></i><div><b>Guaranteed response</b>If there is no reply in time, the complaint moves automatically to the next authority.</div></li>
+        </ul>
+      </div>
+      <div class="small">Smt. Radhadevi Goenka College for Women, Akola</div>
+    </aside>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <div class="auth-head">
+          <div class="brand-mark"><i data-icon="shield"></i></div>
+          <h1>Complaint Box</h1>
+          <p class="muted small">Smt. Radhadevi Goenka College for Women, Akola</p>
+        </div>
+
+        <div id="pageAlert"></div>
+
+        <!-- ================= SIGN IN ================= -->
+        <section id="viewLogin" class="card">
+          <div class="seg" role="tablist">
+            <button type="button" role="tab" id="segLogin" aria-selected="true">Sign in</button>
+            <button type="button" role="tab" id="segRegister" aria-selected="false">Student registration</button>
+          </div>
+
+          <form id="loginForm" novalidate>
+            <div class="field">
+              <label for="loginId">E-mail address or mobile number</label>
+              <div class="input-icon"><i data-icon="user"></i>
+                <input id="loginId" type="text" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="you@example.com or 98765 43210"></div>
+            </div>
+
+            <div class="seg sm" id="methodSeg" role="tablist" aria-label="Sign-in method">
+              <button type="button" role="tab" id="mPassword" aria-selected="true">Password</button>
+              <button type="button" role="tab" id="mOtp" aria-selected="false">One-time password (OTP)</button>
+            </div>
+
+            <div id="passBox" class="field">
+              <label for="loginPass">Password</label>
+              <div class="input-icon"><i data-icon="lock"></i>
+                <input id="loginPass" type="password" autocomplete="current-password"></div>
+              <label class="hint"><input type="checkbox" data-showpass="loginPass"> Show password</label>
+            </div>
+
+            <div id="otpBox" hidden>
+              <div class="field">
+                <label for="loginOtp">Enter the OTP</label>
+                <input id="loginOtp" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="······" aria-label="One-time password">
+                <div class="hint" id="loginOtpHint"></div>
+              </div>
+            </div>
+
+            <div id="capLogin" class="captcha"></div>
+            <button class="btn btn-primary btn-block" id="loginBtn" type="submit">Sign in</button>
+            <div class="row between" style="margin-top:10px">
+              <button type="button" class="linkbtn" id="toForgot">Forgot password?</button>
+              <button type="button" class="linkbtn" id="resendLoginOtp" hidden>Resend OTP</button>
+            </div>
+            <p class="hint center">HOD, Principal and Super Admin sign in here too, with the e-mail and password given by the college.</p>
+          </form>
+        </section>
+
+        <!-- ================= STUDENT REGISTRATION ================= -->
+        <section id="viewRegister" class="card" hidden>
+          <div class="seg" role="tablist">
+            <button type="button" role="tab" id="segLogin2" aria-selected="false">Sign in</button>
+            <button type="button" role="tab" id="segRegister2" aria-selected="true">Student registration</button>
+          </div>
+
+          <ol class="wiz-steps" id="regSteps" aria-label="Registration progress">
+            <li class="wiz-step is-now"><span class="n">1</span>Account</li>
+            <li class="wiz-step"><span class="n">2</span>Verify e-mail</li>
+            <li class="wiz-step"><span class="n">3</span>Your details</li>
+          </ol>
+
+          <!-- Step 1: account -->
+          <form id="regForm1" novalidate>
+            <div class="field">
+              <label for="regName">Full name <span class="req">*</span></label>
+              <input id="regName" type="text" autocomplete="name" maxlength="80" placeholder="As on your college ID card">
+            </div>
+            <div class="field">
+              <label for="regRoll">College roll number <span class="req">*</span></label>
+              <input id="regRoll" type="text" autocapitalize="characters" autocomplete="off" maxlength="30" placeholder="For example BCA2026045">
+            </div>
+            <div class="field">
+              <label for="regEmail">E-mail address <span class="req">*</span></label>
+              <input id="regEmail" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com">
+              <div class="hint">A 6-digit verification code will be sent to this address.</div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="regPass">Create password <span class="req">*</span></label>
+                <input id="regPass" type="password" autocomplete="new-password">
+              </div>
+              <div class="field">
+                <label for="regPass2">Confirm password <span class="req">*</span></label>
+                <input id="regPass2" type="password" autocomplete="new-password">
+              </div>
+            </div>
+            <label class="hint" style="display:block;margin:-6px 0 14px"><input type="checkbox" data-showpass="regPass" data-showpass2="regPass2"> Show passwords</label>
+            <div id="capRegister" class="captcha"></div>
+            <button class="btn btn-primary btn-block" id="regBtn1" type="submit">Continue <i data-icon="arrowRight"></i></button>
+          </form>
+
+          <!-- Step 2: verify e-mail -->
+          <form id="regForm2" novalidate hidden>
+            <h2>Verify your e-mail</h2>
+            <p class="muted">We sent a 6-digit code to <b id="otpEmail"></b>.</p>
+            <div class="field">
+              <input id="otpCode" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="······" aria-label="Verification code">
+            </div>
+            <div id="capOtp" class="captcha"></div>
+            <button class="btn btn-primary btn-block" id="otpBtn" type="submit">Verify and continue</button>
+            <div class="row between" style="margin-top:10px">
+              <button type="button" class="linkbtn" id="resendBtn">Resend code</button>
+              <button type="button" class="linkbtn" id="otpBack">Back</button>
+            </div>
+            <p class="hint center">Please also check your spam / promotions folder.</p>
+          </form>
+
+          <!-- Step 3: details + ID card -->
+          <form id="regForm3" novalidate hidden>
+            <h2>Your details</h2>
+            <p class="muted small">These details help the college confirm that you are a student. Only the Super Admin can see your ID card.</p>
+            <div class="field-row">
+              <div class="field">
+                <label for="dAge">Age <span class="req">*</span></label>
+                <input id="dAge" type="number" inputmode="numeric" min="15" max="60" placeholder="For example 20">
+              </div>
+              <div class="field">
+                <label for="dCourse">Course and year <span class="req">*</span></label>
+                <input id="dCourse" type="text" maxlength="60" placeholder="For example BCA Final Year">
+              </div>
+            </div>
+            <div class="field">
+              <label for="dAddress">Address <span class="req">*</span></label>
+              <textarea id="dAddress" maxlength="250" style="min-height:84px" placeholder="House no., street, area, city, district"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="dPhone">Mobile number <span class="req">*</span></label>
+              <div class="verify-row">
+                <div class="input-icon"><i data-icon="phone"></i>
+                  <input id="dPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="98765 43210"></div>
+                <button class="btn btn-primary" type="button" id="phoneSend" hidden>Send OTP</button>
+              </div>
+              <div id="phoneVerified" style="margin-top:8px" hidden><span class="verified"><i data-icon="checkCircle"></i> Mobile number verified</span></div>
+              <div id="phoneOtpBox" style="margin-top:10px" hidden>
+                <label class="label" for="phoneOtp">Enter the OTP sent by SMS</label>
+                <div class="verify-row">
+                  <input id="phoneOtp" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="······" aria-label="Mobile OTP">
+                  <button class="btn btn-primary" type="button" id="phoneVerify">Verify</button>
+                </div>
+              </div>
+              <div class="hint" id="phoneHint">A 10-digit Indian mobile number is saved with +91.</div>
+            </div>
+
+            <div class="field">
+              <span class="label">College ID card photo <span class="req">*</span></span>
+              <div class="dz" id="idDrop">
+                <div class="dz-preview" id="idPreview" hidden><img id="idImg" alt="Preview of your ID card"></div>
+                <div class="dz-actions">
+                  <button type="button" class="btn" id="idCamera"><i data-icon="camera"></i> Take photo</button>
+                  <button type="button" class="btn" id="idGallery"><i data-icon="folder"></i> Choose from gallery</button>
+                </div>
+                <input type="file" id="inIdCamera" accept="image/*" capture="environment" hidden>
+                <input type="file" id="inIdGallery" accept="image/jpeg,image/png,image/webp" hidden>
+              </div>
+              <div class="hint">Upload a clear photo of your real college ID card (JPG, PNG or WebP). This keeps outsiders out of the portal.</div>
+            </div>
+
+            <button class="btn btn-primary btn-block" id="regBtn3" type="submit"><i data-icon="check"></i> Complete registration</button>
+            <div class="row" style="margin-top:10px;justify-content:center">
+              <button type="button" class="linkbtn" id="cancelDetails">Sign out</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- ================= FORGOT PASSWORD ================= -->
+        <section id="viewForgot" class="card" hidden>
+          <h2>Reset your password</h2>
+
+          <form id="forgotForm1" novalidate>
+            <p class="muted">Enter your registered e-mail address. We will send you a 6-digit code.</p>
+            <div class="field">
+              <label for="forgotEmail">E-mail address</label>
+              <div class="input-icon"><i data-icon="mail"></i>
+                <input id="forgotEmail" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com"></div>
+            </div>
+            <div id="capForgot" class="captcha"></div>
+            <button class="btn btn-primary btn-block" id="forgotBtn" type="submit">Send code</button>
+          </form>
+
+          <form id="forgotForm2" novalidate hidden>
+            <p class="muted">Enter the 6-digit code sent to <b id="forgotSentTo"></b> and choose a new password.</p>
+            <div class="field">
+              <label for="forgotCode">Verification code</label>
+              <input id="forgotCode" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="······" aria-label="Verification code">
+            </div>
+            <div class="field">
+              <label for="newPass">New password</label>
+              <input id="newPass" type="password" autocomplete="new-password">
+            </div>
+            <div class="field">
+              <label for="newPass2">Confirm new password</label>
+              <input id="newPass2" type="password" autocomplete="new-password">
+              <label class="hint"><input type="checkbox" data-showpass="newPass" data-showpass2="newPass2"> Show passwords</label>
+            </div>
+            <button class="btn btn-primary btn-block" id="resetBtn" type="submit">Change password</button>
+            <p class="center small" style="margin-top:10px"><button type="button" class="linkbtn" id="forgotResend">Resend code</button></p>
+          </form>
+
+          <p class="center small" style="margin-top:12px"><button type="button" class="linkbtn" id="forgotBack">Back to sign in</button></p>
+        </section>
+
+        <p class="assurance"><i data-icon="shield"></i> Your complaint is confidential. In anonymous mode your name is hidden from every HOD and the Principal.</p>
+        <footer id="siteFooter"></footer>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

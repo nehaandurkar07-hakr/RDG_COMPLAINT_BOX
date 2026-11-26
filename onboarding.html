@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co; media-src 'self' blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <style id="antiClickjack">html{display:none !important}</style>
+  <script src="js/guard.js"></script>
+  <title>Complete Your Profile | Complaint Box</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#4f5bd5">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar"><div class="wrap">
+    <div class="brand"><div class="brand-mark"><i data-icon="shield"></i></div>
+      <div class="brand-text"><strong id="panelTitle">Account Setup</strong><span id="brandSub"></span></div></div>
+    <div class="userbox"><span class="userchip" id="userChip"></span>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button"><i data-icon="logout"></i> Sign out</button></div>
+  </div></header>
+
+  <main class="page">
+    <div class="wiz-card">
+      <div class="page-head">
+        <h1>Complete Your Profile</h1>
+        <p class="sub">Welcome. Please complete your profile to activate your account.</p>
+      </div>
+
+      <ol class="wiz-steps" id="wizSteps" aria-label="Progress">
+        <li class="wiz-step is-now"><span class="n">1</span>Profile</li>
+        <li class="wiz-step"><span class="n">2</span>Address</li>
+        <li class="wiz-step"><span class="n">3</span>Verify</li>
+        <li class="wiz-step"><span class="n">4</span>Password</li>
+      </ol>
+
+      <!-- STEP 1: PROFILE -->
+      <section class="card" id="step1" data-step="1">
+        <h2>Your profile</h2>
+        <div id="alert1" aria-live="polite"></div>
+        <form id="form1" novalidate>
+          <div class="field">
+            <label for="oName">Full name <span class="req">*</span></label>
+            <div class="input-icon"><i data-icon="user"></i>
+              <input id="oName" type="text" maxlength="80" autocomplete="name" placeholder="Your full name"></div>
+          </div>
+
+          <div class="field">
+            <span class="label">Role</span>
+            <div class="pills" id="rolePills" role="group" aria-label="Role"></div>
+            <div class="hint">Your role is assigned by the college administrator.</div>
+          </div>
+
+          <div class="field" id="deptField" hidden>
+            <label for="oDept">Department <span class="req">*</span></label>
+            <div id="deptSelectBox">
+              <select id="oDept"><option value="">Loading...</option></select>
+              <div class="hint">Choose the department you are the Head of. Each department can have only one HOD.</div>
+            </div>
+            <div id="deptLockedBox" hidden>
+              <input id="oDeptLocked" type="text" readonly aria-label="Department">
+              <div class="hint">Your department was assigned by the administrator.</div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-block" type="submit">Continue <i data-icon="arrowRight"></i></button>
+        </form>
+      </section>
+
+      <!-- STEP 2: ADDRESS -->
+      <section class="card" id="step2" data-step="2" hidden>
+        <h2>Your address</h2>
+        <div id="alert2" aria-live="polite"></div>
+        <form id="form2" novalidate>
+          <div class="field">
+            <label for="oAddress">Address <span class="req">*</span></label>
+            <div class="input-icon"><i data-icon="pin"></i>
+              <input id="oAddress" type="text" maxlength="200" autocomplete="street-address" placeholder="House no., street, area / village"></div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="oDistrict">District <span class="req">*</span></label>
+              <input id="oDistrict" type="text" maxlength="60" autocomplete="address-level2" placeholder="For example Akola">
+            </div>
+            <div class="field">
+              <label for="oState">State <span class="req">*</span></label>
+              <select id="oState" autocomplete="address-level1"></select>
+            </div>
+          </div>
+          <div class="row between" style="margin-top:6px">
+            <button class="btn btn-ghost" type="button" id="back2"><i data-icon="arrowRight" data-class="flip"></i> Back</button>
+            <button class="btn btn-primary" type="submit">Continue <i data-icon="arrowRight"></i></button>
+          </div>
+        </form>
+      </section>
+
+      <!-- STEP 3: VERIFY E-MAIL AND MOBILE -->
+      <section class="card" id="step3" data-step="3" hidden>
+        <h2>Verify your contact details</h2>
+        <p class="muted small">We send a one-time password (OTP) to confirm that the e-mail address and mobile number are really yours.</p>
+        <div id="alert3" aria-live="polite"></div>
+
+        <div class="field" id="emailRow">
+          <label for="oEmail">E-mail address <span class="req">*</span></label>
+          <div class="verify-row">
+            <div class="input-icon"><i data-icon="mail"></i>
+              <input id="oEmail" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="you@example.com"></div>
+            <button class="btn btn-primary" type="button" id="emailSend">Send OTP</button>
+          </div>
+          <div id="emailVerified" style="margin-top:8px" hidden><span class="verified"><i data-icon="checkCircle"></i> E-mail verified</span></div>
+          <div id="emailOtpBox" style="margin-top:10px" hidden>
+            <label class="label" for="emailOtp">Enter the OTP sent to your e-mail</label>
+            <div class="verify-row">
+              <input id="emailOtp" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="······" aria-label="E-mail OTP">
+              <button class="btn btn-primary" type="button" id="emailVerify">Verify</button>
+            </div>
+          </div>
+          <div class="hint">Use your own e-mail address, not the temporary login e-mail given by the administrator. After verification it becomes your sign-in e-mail.</div>
+        </div>
+
+        <div class="field" id="phoneRow">
+          <label for="oPhone">Mobile number <span class="req">*</span></label>
+          <div class="verify-row">
+            <div class="input-icon"><i data-icon="phone"></i>
+              <input id="oPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="98765 43210"></div>
+            <button class="btn btn-primary" type="button" id="phoneSend">Send OTP</button>
+          </div>
+          <div id="phoneVerified" style="margin-top:8px" hidden><span class="verified"><i data-icon="checkCircle"></i> Mobile number verified</span></div>
+          <div id="phoneOtpBox" style="margin-top:10px" hidden>
+            <label class="label" for="phoneOtp">Enter the OTP sent by SMS</label>
+            <div class="verify-row">
+              <input id="phoneOtp" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="······" aria-label="Mobile OTP">
+              <button class="btn btn-primary" type="button" id="phoneVerify">Verify</button>
+            </div>
+          </div>
+          <div class="hint" id="phoneHint">A 10-digit Indian mobile number is saved with +91.</div>
+        </div>
+
+        <div class="row between" style="margin-top:6px">
+          <button class="btn btn-ghost" type="button" id="back3"><i data-icon="arrowRight" data-class="flip"></i> Back</button>
+          <button class="btn btn-primary" type="button" id="toStep4" disabled>Continue <i data-icon="arrowRight"></i></button>
+        </div>
+      </section>
+
+      <!-- STEP 4: PASSWORD -->
+      <section class="card" id="step4" data-step="4" hidden>
+        <h2>Set your own password</h2>
+        <p class="muted small">Choose a new password that only you know. The temporary password will stop working.</p>
+        <div id="alert4" aria-live="polite"></div>
+        <dl class="kv" id="review" style="margin-bottom:16px"></dl>
+        <form id="form4" novalidate>
+          <div class="field">
+            <label for="oPw1">New password <span class="req">*</span></label>
+            <div class="input-icon"><i data-icon="lock"></i>
+              <input id="oPw1" type="password" autocomplete="new-password" maxlength="72"></div>
+            <div class="hint">At least 10 characters with upper and lower case letters, a number and a symbol.</div>
+          </div>
+          <div class="field">
+            <label for="oPw2">Confirm new password <span class="req">*</span></label>
+            <div class="input-icon"><i data-icon="lock"></i>
+              <input id="oPw2" type="password" autocomplete="new-password" maxlength="72"></div>
+            <label class="hint"><input type="checkbox" id="showPw"> Show passwords</label>
+          </div>
+          <div class="row between">
+            <button class="btn btn-ghost" type="button" id="back4"><i data-icon="arrowRight" data-class="flip"></i> Back</button>
+            <button class="btn btn-primary" type="submit" id="activateBtn"><i data-icon="check"></i> Activate my account</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- DONE -->
+      <section class="card" id="stepDone" hidden></section>
+    </div>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/onboarding.js"></script>
+</body>
+</html>

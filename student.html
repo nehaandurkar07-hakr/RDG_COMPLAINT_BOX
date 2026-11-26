@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co; media-src 'self' blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <style id="antiClickjack">html{display:none !important}</style>
+  <script src="js/guard.js"></script>
+  <title>Student Panel | Complaint Box</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#4f5bd5">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar"><div class="wrap">
+    <div class="brand"><div class="brand-mark"><i data-icon="shield"></i></div>
+      <div class="brand-text"><strong id="panelTitle">Complaint Box</strong><span id="brandSub">Student Panel</span></div></div>
+    <div class="userbox"><span class="userchip" id="userChip"></span>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button"><i data-icon="logout"></i> Sign out</button></div>
+  </div></header>
+
+  <main class="page">
+    <div class="page-head">
+      <h1 id="hello">Welcome</h1>
+      <p class="sub">File a complaint, track its progress and see what other students are reporting.</p>
+    </div>
+    <div id="notice"></div>
+
+    <div class="tabs tabs-3" role="tablist">
+      <button class="tab" type="button" role="tab" aria-selected="true" data-tab="new"><i data-icon="plus"></i> New Complaint</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-tab="mine"><i data-icon="clipboard"></i> My Complaints <span class="dot" id="mineDot" hidden></span></button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-tab="wall"><i data-icon="globe"></i> Public Wall</button>
+    </div>
+
+    <!-- NEW COMPLAINT -->
+    <section id="tab-new">
+      <form id="cForm" class="card" novalidate>
+        <h2>Submit a new complaint</h2>
+        <p class="muted small">Please describe the problem clearly. You will receive an e-mail whenever its status changes.</p>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="fCategory">Category</label>
+            <select id="fCategory" required></select>
+          </div>
+          <div class="field">
+            <label for="fAgainst">Who is this complaint about?</label>
+            <select id="fAgainst"></select>
+          </div>
+        </div>
+        <div class="hint" id="againstHint" style="margin:-8px 0 14px"></div>
+
+        <div class="field" id="deptField">
+          <label for="fDept">Department concerned</label>
+          <select id="fDept" required><option value="">Loading...</option></select>
+          <div class="hint" id="deptHint">The complaint is routed to the Head of Department of the department you select.</div>
+        </div>
+
+        <div class="field">
+          <label for="fSubject">Subject</label>
+          <input id="fSubject" type="text" maxlength="120" placeholder="For example: Five computers in Lab 2 are not working">
+        </div>
+
+        <div class="field">
+          <label for="fDesc">Describe the problem</label>
+          <textarea id="fDesc" maxlength="3000" placeholder="What happened, when it happened and where..."></textarea>
+          <div class="hint"><span id="descCount">0</span> / 3000</div>
+        </div>
+
+        <div id="prioAlert"></div>
+
+        <div class="field">
+          <span class="label">Proof (photo, video or PDF) <span class="muted">- optional</span></span>
+          <div class="upload-btns">
+            <button type="button" class="btn" id="btnCamera"><i data-icon="camera"></i> Take photo</button>
+            <button type="button" class="btn" id="btnVideo"><i data-icon="video"></i> Record video</button>
+            <button type="button" class="btn" id="btnGallery"><i data-icon="folder"></i> Choose file / gallery</button>
+          </div>
+          <input type="file" id="inCamera" accept="image/*" capture="environment" hidden>
+          <input type="file" id="inVideo" accept="video/*" capture="environment" hidden>
+          <input type="file" id="inGallery" accept="image/*,video/*,application/pdf" multiple hidden>
+          <div id="fileList"></div>
+          <div class="hint" id="fileHint"></div>
+        </div>
+
+        <div class="stack" style="margin-bottom:16px">
+          <label class="check" id="anonBox">
+            <input type="checkbox" id="fAnon">
+            <div><strong><i data-icon="lock"></i> Hide my identity (Anonymous)</strong>
+              <span id="anonText">The complaint is visible to the HOD / Principal, but your name and roll number are not.</span></div>
+          </label>
+          <label class="check" id="pubBox">
+            <input type="checkbox" id="fPublic">
+            <div><strong><i data-icon="globe"></i> Make this complaint public</strong>
+              <span id="pubText">For common problems (canteen, Wi-Fi...). Other students can see the complaint and proof and press "I also face this". Your name is never shown.</span></div>
+          </label>
+        </div>
+
+        <div class="progress" id="progress" hidden><i id="progressBar"></i></div>
+        <div class="progress-label" id="progressLabel" hidden></div>
+        <button class="btn btn-primary btn-block" id="submitBtn" type="submit" style="margin-top:12px"><i data-icon="check"></i> Submit complaint</button>
+      </form>
+
+      <div class="card" id="doneCard" hidden></div>
+    </section>
+
+    <!-- MY COMPLAINTS -->
+    <section id="tab-mine" hidden>
+      <div id="mineList" class="list"></div>
+    </section>
+
+    <!-- PUBLIC WALL -->
+    <section id="tab-wall" hidden>
+      <div class="alert alert-info"><i data-icon="info"></i><div>These are common problems that students have chosen to make public. If you face the same problem, add your vote. Issues with more votes are highlighted for the authorities.</div></div>
+      <div id="wallList" class="list"></div>
+    </section>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/dist/tus.min.js" integrity="sha384-UlHjK3F7TCQCEUpnoa1ohMbP2oaWB3Aypv4gMo511vaZ86uUZ0Zv7UzZ0J1zRUT1" crossorigin="anonymous"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/student.js"></script>
+</body>
+</html>
