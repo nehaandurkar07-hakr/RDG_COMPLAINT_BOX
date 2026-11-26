@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co; media-src 'self' blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <style id="antiClickjack">html{display:none !important}</style>
+  <script src="js/guard.js"></script>
+  <title>Dashboard | Complaint Box</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#4f5bd5">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar"><div class="wrap">
+    <div class="brand"><div class="brand-mark"><i data-icon="shield"></i></div>
+      <div class="brand-text"><strong id="panelTitle">Complaint Box</strong><span id="brandSub"></span></div></div>
+    <div class="userbox"><span class="userchip" id="userChip"></span>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button"><i data-icon="logout"></i> Sign out</button></div>
+  </div></header>
+
+  <div class="page">
+    <div class="layout has-side">
+
+      <!-- Profile card (filled in by staff.js) -->
+      <aside class="side">
+        <div class="card profile-card" id="profileCard"></div>
+      </aside>
+
+      <main class="main">
+        <div class="page-head row between">
+          <div>
+            <h1 id="hello">Dashboard</h1>
+            <p class="sub" id="helloSub"></p>
+          </div>
+          <button class="btn btn-sm" id="refreshBtn" type="button"><i data-icon="refresh"></i> Refresh</button>
+        </div>
+
+        <!-- Super Admin tabs (shown only for the Super Admin) -->
+        <nav class="tabs" id="adminTabs" role="tablist" hidden>
+          <button class="tab" type="button" role="tab" aria-selected="true" data-tab="complaints"><i data-icon="clipboard"></i> Complaints</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="staff"><i data-icon="users"></i> Staff</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="students"><i data-icon="idcard"></i> Students</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="rolls"><i data-icon="file"></i> Roll List</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="activity"><i data-icon="activity"></i> Activity</button>
+        </nav>
+
+        <div id="paneComplaints">
+          <div id="notice"></div>
+          <div class="stats" id="stats"></div>
+
+          <div class="filters">
+            <div class="full input-icon">
+              <i data-icon="search"></i>
+              <input type="search" id="fSearch" placeholder="Search by complaint ID or subject" aria-label="Search complaints">
+            </div>
+            <select id="fLevel" aria-label="Show"></select>
+            <select id="fStatus" aria-label="Status">
+              <option value="">All statuses</option>
+              <option value="open">Pending (open)</option>
+              <option value="submitted">Submitted</option>
+              <option value="under_review">Under Review</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <select id="fCategory" aria-label="Category"></select>
+            <select id="fPrio" aria-label="Priority">
+              <option value="">All priorities</option>
+              <option value="high">High Priority only</option>
+            </select>
+            <select id="fDept" aria-label="Department" hidden></select>
+            <select id="fAgainst" aria-label="Complaint against" hidden></select>
+          </div>
+
+          <div id="list" class="list"></div>
+        </div>
+
+        <section id="paneStaff" hidden></section>
+        <section id="paneStudents" hidden></section>
+        <section id="paneRolls" hidden></section>
+        <section id="paneActivity" hidden></section>
+      </main>
+    </div>
+  </div>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/staff.js"></script>
+</body>
+</html>
