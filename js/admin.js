@@ -13,6 +13,8 @@
     staff_setup_done: 'Completed first login',
     staff_password_reset: 'Password reset',
     roll_list_imported: 'Roll number list imported',
+    student_blocked: 'Student account blocked',
+    student_unblocked: 'Student account unblocked',
   };
 
   let sb = null;
@@ -140,7 +142,7 @@
   }
 
   // =====================================================================
-  // STUDENTS (read-only, to check ID cards)
+  // STUDENTS (check ID cards, block or unblock)
   // =====================================================================
   let studentRows = [];
 
@@ -152,7 +154,7 @@
       if (error) throw error;
       studentRows = data || [];
       pane.innerHTML =
-        note('info', 'idcard', 'Every student uploads a photo of the college ID card while registering. Use this list to check that the person belongs to the college.') +
+        note('info', 'idcard', 'Every student uploads a photo of the college ID card while registering. Use this list to check that the person belongs to the college. If a card is not valid, you can block the student.') +
         '<div class="field input-icon">' + App.icon('search') +
         '<input type="search" id="stSearch" placeholder="Search by name, roll number, mobile or e-mail" aria-label="Search students"></div>' +
         '<p class="muted small" id="stCount"></p>' +
@@ -175,9 +177,11 @@
     list.innerHTML = rows.map((s) =>
       '<div class="card flat staff-card">' +
       '<div class="row between"><span class="who">' + esc(s.full_name || '-') + '</span>' +
-      (s.registration_complete
-        ? '<span class="badge b-resolved">' + App.icon('checkCircle') + ' Registered</span>'
-        : '<span class="badge b-in_progress">' + App.icon('clock') + ' Registration incomplete</span>') + '</div>' +
+      (s.is_active === false
+        ? '<span class="badge b-rejected">' + App.icon('xCircle') + ' Blocked</span>'
+        : s.registration_complete
+          ? '<span class="badge b-resolved">' + App.icon('checkCircle') + ' Registered</span>'
+          : '<span class="badge b-in_progress">' + App.icon('clock') + ' Registration incomplete</span>') + '</div>' +
       '<dl class="kv">' +
       '<dt>Roll number</dt><dd>' + esc(s.roll_no || '-') + '</dd>' +
       '<dt>Course</dt><dd>' + esc(s.course || '-') + (s.age ? ' &middot; Age ' + esc(s.age) : '') + '</dd>' +
@@ -186,12 +190,39 @@
       '<dt>Address</dt><dd>' + esc(s.address || '-') + '</dd>' +
       '<dt>Registered</dt><dd>' + esc(App.fmtDate(s.created_at)) + '</dd>' +
       '</dl>' +
-      '<div class="actions"><button class="btn btn-sm" type="button" data-id-card="' + esc(s.id) + '">' + App.icon('idcard') + ' View ID card</button></div>' +
+      '<div class="actions"><button class="btn btn-sm" type="button" data-id-card="' + esc(s.id) + '">' + App.icon('idcard') + ' View ID card</button>' +
+      (s.is_active === false
+        ? '<button class="btn btn-sm" type="button" data-block="' + esc(s.id) + '" data-to="1">' + App.icon('checkCircle') + ' Unblock student</button>'
+        : '<button class="btn btn-sm btn-danger" type="button" data-block="' + esc(s.id) + '" data-to="0">' + App.icon('xCircle') + ' Block student</button>') +
+      '</div>' +
       '</div>').join('');
     $$('[data-id-card]', list).forEach((b) => b.addEventListener('click', () => {
       const s = studentRows.find((x) => x.id === b.dataset.idCard);
       if (s) viewIdCard(s, b);
     }));
+    $$('[data-block]', list).forEach((b) => b.addEventListener('click', () => {
+      const s = studentRows.find((x) => x.id === b.dataset.block);
+      if (s) setBlocked(s, b.dataset.to === '1', b);
+    }));
+  }
+
+  // Block / unblock a student (Super Admin only; the database checks this again)
+  async function setBlocked(s, makeActive, btn) {
+    const who = (s.full_name || 'this student') + (s.roll_no ? ' (' + s.roll_no + ')' : '');
+    const text = makeActive
+      ? 'Unblock ' + who + '?\n\nThe student will be able to sign in and file complaints again.'
+      : 'Block ' + who + '?\n\nThe student will not be able to sign in, file complaints or vote. Complaints already filed are kept and handled by the staff. ' +
+        'The roll number and e-mail stay taken, so the student cannot register again. You can unblock the student at any time.';
+    if (!window.confirm(text)) return false;
+    App.setBusy(btn, true, 'Please wait...');
+    try {
+      const { error } = await sb.rpc('set_student_active', { p_id: s.id, p_active: makeActive });
+      if (error) throw error;
+      s.is_active = makeActive;
+      App.toast(makeActive ? 'Student unblocked.' : 'Student blocked.', 'ok');
+      renderStudents();
+      return true;
+    } catch (e) { App.toast(App.errMsg(e), 'bad'); App.setBusy(btn, false); return false; }
   }
 
   async function viewIdCard(s, btn) {
@@ -203,9 +234,15 @@
       const sheet = App.openSheet(
         '<div class="sheet-head"><div><div class="muted small">College ID card</div><h2></h2></div>' + App.CLOSE_BTN + '</div>' +
         '<img class="idcard-img" alt="College ID card">' +
-        '<p class="hint">This link expires in 5 minutes. The image is private and visible only to the Super Admin.</p>');
+        '<p class="hint">This link expires in 5 minutes. The image is private and visible only to the Super Admin.</p>' +
+        (s.is_active === false ? '' :
+          '<div class="row" style="margin-top:12px"><button class="btn btn-danger" id="idBlock" type="button">' + App.icon('xCircle') + ' This is not a valid ID card: block student</button></div>'));
       $('h2', sheet).textContent = (s.full_name || 'Student') + (s.roll_no ? ' (' + s.roll_no + ')' : '');
       $('img', sheet).src = data.signedUrl;
+      const blockBtn = $('#idBlock', sheet);
+      if (blockBtn) blockBtn.addEventListener('click', async () => {
+        if (await setBlocked(s, false, blockBtn)) App.closeSheet();
+      });
     } catch (e) { App.toast(App.errMsg(e), 'bad'); }
     finally { App.setBusy(btn, false); }
   }
